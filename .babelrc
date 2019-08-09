@@ -1,0 +1,63 @@
+{
+  //.babelrc（和.babelrc.js/ package.json#babel）文件名 都可以
+  // @babel/core 核心模块, 具体的编译都是他负责;
+  // 7.x 开始对命名使用的新规范
+
+  // 1:@babel/preset-env
+  // 可以根据配置的目标浏览器或者运行环境来自动将ES2015+的代码转换为es5。
+  // 官方维护的类型
+  // @babel/preset-env
+  // @babel/preset-flow
+  // @babel/preset-react
+  // @babel/preset-typescript
+  // Stage 0 - 设想（Strawman）：只是一个想法，可能有 Babel插件。
+  // Stage 1 - 建议（Proposal）：这是值得跟进的。
+  // Stage 2 - 草案（Draft）：初始规范。
+  // Stage 3 - 候选（Candidate）：完成规范并在浏览器上初步实现。
+  // Stage 4 - 完成（Finished）：将添加到下一个年度版本发布中。
+  // preset-es2015 等等 被@babel/preset-env取代, babel7版本
+  // 如果不进行任何配置，上述 preset 所包含的插件将支持所有最新的 JavaScript （ES2015、ES2016 等）特性。
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+            // 用户占比大于1%的浏览器的 最后两个版本
+          "browsers": ["> 1%", "last 2 versions"]
+        }
+      }
+    ]
+  ],
+  // 2: 解释polyfill 与  "@babel/plugin-transform-runtime"
+  // polifill （没有<第4阶段提案）
+  "plugins": [
+    [
+    // npm install --save-dev @babel/plugin-transform-runtime
+    // 这个要save生产环境, 因为他是'运行时'
+    // npm install --save @babel/runtime
+      "@babel/plugin-transform-runtime",
+    // 避免多次编译出helper函数：
+    // Babel转移后的代码想要实现和原来代码一样的功能需要借助一些帮助函数
+    //@babel/runtime包就声明了所有需要用到的帮助函数，而@babel/plugin-transform-runtime的作用就是将所有需要helper函数的文件，依赖@babel/runtime包
+    // plugin-transform-runtime 已经默认包括了 @babel/polyfill，因此不用在独立引入。
+    // * 不会污染全局变量
+    // * 多次使用只会打包一次
+    // * 依赖统一按需引入,无重复引入,无多余引入
+    // 缺点
+    // 不支持实例化的方法Array.includes(x) 就不能转化, 因为如果实现了这个就是污染全局了啊
+    // * 如果使用的API用的次数不是很多，那么transform-runtime 引入polyfill的包会比不是transform-runtime 时大
+      // 这意味着您可以无缝地使用这些本机内置函数和静态方法，而无需担心它们来自何处。
+      // 注：实例方法，如"foobar".includes("foo")将无法正常工作。
+      {
+        "absoluteRuntime": false,
+        // 如果配置他为2, false不用
+        // 需安装 @babel/runtime-corejs2
+        // 则不用安装 @babel/runtime
+        // 作用: promise 代码变成了一个独立的变量 _promise，不会影响全局的 Promise。
+        "corejs": 2,
+        // 默认就是true  写出来让大家知晓
+        "regenerator": true, // 切换生成器函数是否转换为使用不会污染全局范围的再生器运行时。
+      }
+    ]
+  ]
+}
