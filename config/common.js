@@ -14,7 +14,7 @@ const common = {
   module: {
     rules: [
       {
-        test: /.(css|sass|scss|less)$/,
+        test: /.(css)$/,
         use: ['style-loader', 'css-loader', 'postcss-loader']
       },
       {

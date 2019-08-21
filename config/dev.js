@@ -12,8 +12,7 @@ module.exports = {
     new Webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: path.resolve(__dirname, '../use/1:模板.html'),
-      inject: 'head'
+      template: path.resolve(__dirname, '../use/1:模板解析/index.html'),
     })
   ]
 };

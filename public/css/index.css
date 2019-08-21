@@ -1,5 +1,13 @@
 
+.template-wrap{
+    display: flex;
+}
 .template{
+    display: inline-block;
     border: 3px double rgb(8, 162, 218);
-    padding: 20px;
+    padding: 30px;
+    margin: 10px;
+}
+.template>h3{
+    color: #409EFF;
 }
