@@ -7,8 +7,6 @@
     <title>Document</title>
   </head>
   <body>
-    <!-- 这个html只负责解析模板, 少量的模板语法 -->
-    <!-- 太复杂的做起来太费劲, 只是把原理弄透 -->
     <div class="template-wrap">
       <div class="template">
         <h3>data数据</h3>
@@ -42,7 +40,7 @@ data:{
         <p>{{ fn()+'-我要-'+title }}</p>
       </div>
       <div id="app" class="template">
-        <h3>解析完模板</h3>
+        <h3>解析完的模板</h3>
         <p>{{ title }} + {{ title }}</p>
         <p>{{ ary[1] }}</p>
         <p>{{ obj.name }}</p>

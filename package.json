@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "webpack-dev-server --hot --env dev --config ./config/common.js",
+    "serve": "webpack-dev-server --env dev --config ./config/common.js",
     "build": "webpack --env build --config ./config/common.js"
   },
   "author": "",

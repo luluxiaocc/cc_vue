@@ -1,6 +1,7 @@
 // 工具方法
 // vue 开启严格模式, 不支持with!!!!!!
-var regexEscapeRE = /[\?\*\+\/\:-]/g;
+// with会导致变量泄漏到全局, 因为他没有var 与 let关键字, 所以会被默认提升
+import {Watcher, Dep} from './Watch';
 const CompileUtil = {
   /**
    * @method 处理文本节点
@@ -8,6 +9,9 @@ const CompileUtil = {
    */
   text(node, expr, vm) {
     let content = expr.replace(/\{\{(.+?)\}\}/g, ($0, $1) => {
+      new Watcher(vm, $1, () => {
+        this.updater.textUpdater(node, this.getContentValue(vm, expr));
+      });
       return this.getVal(vm, $1);
     });
     this.updater.textUpdater(node, content);
@@ -24,14 +28,20 @@ const CompileUtil = {
       // data下期做代理, 并且去掉原型上的属性
       let item = vm.$data[i];
       if (typeof item === 'function') {
-        __whoToVar += `function ${i}(...arg){return vm.$data['${i}'].call(vm.$data,...arg)}`;
+        __whoToVar += `function ${i}(...arg){return vm['${i}'].call(vm,...arg)}`;
       } else {
-        __whoToVar += `let ${i}=${JSON.stringify(vm.$data[i])};`;
+        __whoToVar += `let ${i}=vm['${i}'];`;
       }
     }
     __whoToVar = `${__whoToVar}result=${expression}`;
     eval(__whoToVar);
     return result;
+  },
+  getContentValue(vm, expr) {
+    return expr.replace(/\{\{(.+?)\}\}/g, ($0, $1) => {
+      $1 = $1.trim();
+      return this.getVal(vm, $1);
+    });
   },
   /**
    * @method 更新方法大集合

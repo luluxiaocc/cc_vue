@@ -14,11 +14,11 @@ const common = {
   module: {
     rules: [
       {
-        test: /.(css)$/,
+        test: /\.css$/,
         use: ['style-loader', 'css-loader', 'postcss-loader']
       },
       {
-        test: /.js$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader?cacheDirectory=true'
       }

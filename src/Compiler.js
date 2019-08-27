@@ -1,4 +1,4 @@
-//
+// 解析模板系列节目
 import CompileUtil from './CompileUtil';
 class Compiler {
   constructor(el = '#app', vm) {
