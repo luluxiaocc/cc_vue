@@ -10,7 +10,7 @@ class Observer {
    * @param { data } 要观察的对象
    */
   observer(data) {
-    if (data && typeof data === 'object') {
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
       for (let key in data) {
         this.defineReactive(data, key, data[key]);
       }
@@ -30,7 +30,7 @@ class Observer {
       configurable: true, // 可改变可删除
       enumerable: true, // 可枚举
       get() {
-          Dep.target && dep.addSub(Dep.target);
+        Dep.target && dep.addSub(Dep.target);
         return value;
       },
       set(newVal) {

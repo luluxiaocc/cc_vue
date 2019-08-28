@@ -28,6 +28,8 @@ class C {
   proxyVm(data = {}, target = this) {
     for (let key in data) {
       Object.defineProperty(target, key, {
+        enumerable: true, // 描述属性是否会出现在for in 或者 Object.keys()的遍历中
+        configurable: true, // 描述属性是否配置，以及可否删除
         get() {
           return data[key];
         },

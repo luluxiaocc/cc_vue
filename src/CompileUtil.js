@@ -1,7 +1,8 @@
 // 工具方法
 // vue 开启严格模式, 不支持with!!!!!!
 // with会导致变量泄漏到全局, 因为他没有var 与 let关键字, 所以会被默认提升
-import {Watcher, Dep} from './Watch';
+import { Watcher } from './Watch';
+
 const CompileUtil = {
   /**
    * @method 处理文本节点
