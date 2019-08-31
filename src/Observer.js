@@ -1,45 +1,49 @@
 // 数据劫持
 import { Dep } from './Watch';
+let toString = Object.prototype.toString;
 class Observer {
-  constructor(data) {
-    this.data = data;
-    this.observer(data);
+  constructor(vm, data) {
+    vm.$data = this.observer(data);
+  }
+  /**
+   * @method 遍历出需要观察的对象
+   * @param { data } 要观察的对象
+   */
+  observer(data) {
+    let type = toString.call(data),
+        $data = this.defineReactive(data);
+    if (type === '[object Object]') {
+      for (let item in data) {
+        data[item] = this.defineReactive(data[item]);
+      }
+    } else if (type === '[object Array]') {
+      let len = data.length;
+      for (let i; i < len; i++) {
+        data[i] = this.defineReactive(data[i]);
+      }
+    }
+    return $data;
   }
   /**
    * @method 针对对象进行观察
    * @param { data } 要观察的对象
    */
-  observer(data) {
-    if (data && typeof data === 'object' && !Array.isArray(data)) {
-      for (let key in data) {
-        this.defineReactive(data, key, data[key]);
-      }
-    }
-  }
-  /**
-   * @method 进行双向绑定,每个值以后的操作动作,都会反应到这里.
-   * @param { obj } 要观察的对象
-   * @param { key } 要观察的对象
-   * @param { value } 要观察的对象
-   */
-  defineReactive(obj, key, value) {
-    this.observer(obj[key]);
-    let dep = new Dep();
-    let _this = this;
-    Object.defineProperty(obj, key, {
-      configurable: true, // 可改变可删除
-      enumerable: true, // 可枚举
-      get() {
+  defineReactive(data) {
+    let type = toString.call(data);
+    if (type !== '[object Object]' && type !== '[object Array]') return data;
+    let dep = new Dep(),
+        _this = this;
+    return new Proxy(data, {
+      get(target, key) {
         Dep.target && dep.addSub(Dep.target);
-        return value;
+        return target[key];
       },
-      set(newVal) {
-        if (value !== newVal) {
-          // 如果用户传进来的新值是个对象, 那就重新观察他
-          _this.observer(newVal);
-          value = newVal;
-          dep.notify()
+      set(target, key, value) {
+        if (target[key] !== value) {
+          target[key] = _this.observer(value);
+          dep.notify();
         }
+        return value;
       }
     });
   }

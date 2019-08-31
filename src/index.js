@@ -1,6 +1,6 @@
 // import init from '../use/1:模板解析/index.js';
-import init from '../use/2:双向绑定/index.js';
 import '../public/css/index.css';
+import init from '../use/2:双向绑定/index.js';
 import Compiler from './Compiler.js';
 import Observer from './Observer.js';
 
@@ -12,7 +12,7 @@ class C {
     }
 
     // 2: 劫持data上面的操作
-    new Observer(this.$data);
+    new Observer(this,this.$data);
 
     // 3: 把$data挂在vm身上, 用户可以直接this.xxx获取到值
     this.proxyVm(this.$data);
@@ -27,15 +27,15 @@ class C {
    */
   proxyVm(data = {}, target = this) {
     for (let key in data) {
-      Object.defineProperty(target, key, {
+      Reflect.defineProperty(target, key, {
         enumerable: true, // 描述属性是否会出现在for in 或者 Object.keys()的遍历中
         configurable: true, // 描述属性是否配置，以及可否删除
         get() {
-          return data[key];
+          return Reflect.get(data,key)
         },
         set(newVal) {
           if (newVal !== data[key]) {
-            data[key] = newVal;
+            Reflect.set(data,key,newVal)
           }
         }
       });
