@@ -34,8 +34,8 @@ const CompileUtil = {
         __whoToVar += `let ${i}=vm['${i}'];`;
       }
     }
-    __whoToVar = `${__whoToVar}result=${expression}`;
-    eval(__whoToVar);
+    __whoToVar = `${__whoToVar} return ${expression}`;
+    result = (new Function('vm', __whoToVar))(vm);
     return result;
   },
   getContentValue(vm, expr) {
