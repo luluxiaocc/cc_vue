@@ -3,13 +3,13 @@ import CompileUtil from './CompileUtil';
 // 1. 订阅发布
 export class Dep {
   constructor() {
-    this.subs = [];
+    this.subs = new Set();
   }
   /**
    * @method 添加进订阅队列.
    */
   addSub(w) {
-    this.subs.push(w);
+    this.subs.add(w);
   }
   /**
    * @method 发布信息,通知所有订阅者.
@@ -22,8 +22,8 @@ export class Dep {
 export class Watcher {
   constructor(vm, expr, cb) {
     this.vm = vm;
-    this.expr = expr;
     this.cb = cb;
+    this.expr = expr;
     this.oldValue = this.getOld();
   }
   /**
@@ -41,8 +41,8 @@ export class Watcher {
   update() {
     let newVal = CompileUtil.getVal(this.vm, this.expr.trim());
     if (newVal !== this.oldValue) {
-    //   this.cb(newVal);
-    this.cb();
+      this.cb(this.oldValue, newVal);
+      this.oldValue = newVal;
     }
   }
 }

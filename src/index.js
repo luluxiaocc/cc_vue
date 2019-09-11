@@ -1,6 +1,8 @@
-// import init from '../use/1:模板解析/index.js';
 import '../public/css/index.css';
-import init from '../use/2:双向绑定/index.js';
+// import init from '../use/1:模板解析/index.js';
+// import init from '../use/2:双向绑定/index.js';
+import init from '../use/3:指令/index.js'
+import CCStyle from './CCStyle.js'
 import Compiler from './Compiler.js';
 import Observer from './Observer.js';
 
@@ -10,6 +12,9 @@ class C {
     for (let key in options) {
       this['$' + key] = options[key];
     }
+
+    // 1.2: 头部插入css样式
+    new CCStyle();
 
     // 2: 劫持data上面的操作
     new Observer(this,this.$data);

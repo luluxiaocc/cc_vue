@@ -35,7 +35,7 @@ const CompileUtil = {
       }
     }
     __whoToVar = `${__whoToVar} return ${expression}`;
-    result = (new Function('vm', __whoToVar))(vm);
+    result = new Function('vm', __whoToVar)(vm);
     return result;
   },
   getContentValue(vm, expr) {
@@ -55,6 +55,27 @@ const CompileUtil = {
      */
     textUpdater(node, value) {
       node.textContent = value;
+    }
+  },
+  // 专门放指令的对象
+  dir: {
+    html(vm, node, value, expr) {
+      node.innerHTML = value;
+      new Watcher(vm, expr, (old, newVale) => {
+        node.innerHTML = newVale;
+      });
+    },
+    show(vm, node, value, expr) {
+      // 要考虑 这个属性是否与元素本身的冲突, 明天写
+      // 添加class是最好的
+      value
+        ? node.classList.remove('cc_vue-hidden')
+        : node.classList.add('cc_vue-hidden');
+      new Watcher(vm, expr, (old, newVale) => {
+        newVale
+          ? node.classList.remove('cc_vue-hidden')
+          : node.classList.add('cc_vue-hidden');
+      });
     }
   }
 };

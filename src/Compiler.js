@@ -62,7 +62,23 @@ class Compiler {
    */
   compileElement(node) {
     // 先解析出指令吧
-
+    let attributes = node.attributes;
+    [...attributes].map(attr => {
+      let name = attr.name,
+        value = attr.value,
+        obj = this.isDirective(name);
+      if (obj.type === '指令') {
+        CompileUtil.dir[obj.attrName] &&
+          CompileUtil.dir[obj.attrName](
+            this.vm,
+            node,
+            CompileUtil.getVal(this.vm, value),
+            value
+          );
+      } else if (obj.type === '事件') {
+        // CompileUtil.eventHandler(node, this.vm, obj.attrName, value);
+      }
+    });
   }
   /**
    * @method 处理文本节点
@@ -73,6 +89,19 @@ class Compiler {
     if (/\{\{.+?\}\}/.test(content)) {
       CompileUtil.text(node, content, this.vm);
     }
+  }
+  // 是什么指令
+  isDirective(attrName) {
+    if (attrName.startsWith('c-')) {
+      return { type: '指令', attrName: attrName.split('c-')[1] };
+    } else if (attrName.startsWith(':')) {
+      return { type: '变量', attrName: attrName.split(':')[1] };
+    } else if (attrName.startsWith('v-on:')) {
+      return { type: '事件', attrName: attrName.split('v-on:')[1] };
+    } else if (attrName.startsWith('@')) {
+      return { type: '事件', attrName: attrName.split('@')[1] };
+    }
+    return {};
   }
 }
 

@@ -11,7 +11,7 @@ class Observer {
    */
   observer(data) {
     let type = toString.call(data),
-        $data = this.defineReactive(data);
+      $data = this.defineReactive(data);
     if (type === '[object Object]') {
       for (let item in data) {
         data[item] = this.defineReactive(data[item]);
@@ -32,7 +32,7 @@ class Observer {
     let type = toString.call(data);
     if (type !== '[object Object]' && type !== '[object Array]') return data;
     let dep = new Dep(),
-        _this = this;
+      _this = this;
     return new Proxy(data, {
       get(target, key) {
         Dep.target && dep.addSub(Dep.target);
