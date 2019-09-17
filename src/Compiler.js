@@ -86,6 +86,7 @@ class Compiler {
    */
   compileText(node) {
     let content = node.textContent;
+    content = content.replace(/\s/g,'');
     if (/\{\{.+?\}\}/.test(content)) {
       CompileUtil.text(node, content, this.vm);
     }

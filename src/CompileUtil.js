@@ -13,6 +13,7 @@ const CompileUtil = {
       new Watcher(vm, $1, () => {
         this.updater.textUpdater(node, this.getContentValue(vm, expr));
       });
+
       return this.getVal(vm, $1);
     });
     this.updater.textUpdater(node, content);

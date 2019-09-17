@@ -11,7 +11,13 @@
       <p>n: {{ n }}</p>
       <p>{{ add() }}</p>
       <div c-show="s" c-html="dom"></div>
-      <div>{{ if(s){ cc_cb(12) }else{cc_cb('s为false')} }}</div>
+      <div>{{ 
+          if(s){
+            cc_cb(12) 
+          }else{
+            cc_cb('s为false')
+          };
+       }}</div>
     </div>
   </body>
 </html>
