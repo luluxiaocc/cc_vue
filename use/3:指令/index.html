@@ -9,7 +9,9 @@
   <body>
     <div id="app">
       <p>n: {{ n }}</p>
-      <div c-show='s' c-html='dom'></div>
+      <p>{{ add() }}</p>
+      <div c-show="s" c-html="dom"></div>
+      <div>{{ if(s){ cc_cb(12) }else{cc_cb('s为false')} }}</div>
     </div>
   </body>
 </html>

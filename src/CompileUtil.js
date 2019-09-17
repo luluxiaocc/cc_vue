@@ -26,15 +26,14 @@ const CompileUtil = {
     let result,
       __whoToVar = '';
     for (let i in vm.$data) {
-      // data下期做代理, 并且去掉原型上的属性
-      let item = vm.$data[i];
-      if (typeof item === 'function') {
-        __whoToVar += `function ${i}(...arg){return vm['${i}'].call(vm,...arg)}`;
-      } else {
-        __whoToVar += `let ${i}=vm['${i}'];`;
-      }
+      // data下期做代理, 不用去掉原型上的属性
+      __whoToVar += `let ${i} = vm['${i}'];`;
     }
-    __whoToVar = `${__whoToVar} return ${expression}`;
+    if (/cc_cb/.test(expression)) {
+      __whoToVar = `let _res;function cc_cb(v){ _res = v;}${__whoToVar}${expression};return _res`;
+    } else {
+      __whoToVar = `${__whoToVar} return ${expression}`;
+    }
     result = new Function('vm', __whoToVar)(vm);
     return result;
   },
@@ -59,15 +58,15 @@ const CompileUtil = {
   },
   // 专门放指令的对象
   dir: {
+    // 这个指令也就那样吧, 没感觉太精髓
     html(vm, node, value, expr) {
       node.innerHTML = value;
       new Watcher(vm, expr, (old, newVale) => {
         node.innerHTML = newVale;
       });
     },
+    // 思想很重要, 当然只是我自己想的.
     show(vm, node, value, expr) {
-      // 要考虑 这个属性是否与元素本身的冲突, 明天写
-      // 添加class是最好的
       value
         ? node.classList.remove('cc_vue-hidden')
         : node.classList.add('cc_vue-hidden');

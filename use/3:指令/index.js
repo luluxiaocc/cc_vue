@@ -7,6 +7,7 @@ function init() {
       n: 3,
       s:false,
       name:'ccc',
+      add(){return 16},
       dom:'<p>我是p</p>'
     }
   });
