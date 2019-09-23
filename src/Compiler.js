@@ -76,7 +76,12 @@ class Compiler {
             value
           );
       } else if (obj.type === '事件') {
-        // CompileUtil.eventHandler(node, this.vm, obj.attrName, value);
+        // 当前只处理了原生事件;
+        if(CompileUtil.eventHandler.list.includes(obj.attrName)){
+         CompileUtil.eventHandler.handler(obj.attrName,this.vm, node, value);
+        }else{
+          // eventHandler[obj.attrName] 这个事件不是原生挂载事件, 不能用handler 处理
+        }
       }
     });
   }

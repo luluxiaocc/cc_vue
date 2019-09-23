@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      #bt{
+        border: 1px solid;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <ol type='A'>
+        <li><button id="bt" @click='add'>点击我n++ --> add</button></li>
+        <li><button id="bt" @click='add()'>点击我n++ --> add()</button></li>
+        <li><button id="bt" @click='add(3)'>点击我n++ --> add(3)</button></li>
+        <li><button id="bt" @click='add(3,    $event)'>点击我n++ --> add($event)</button></li>
+        <hr>
+        <li><button id="bt" v-on:click='add'>点击我n++ --> add</button></li>
+        <li><button id="bt" v-on:click='add()'>点击我n++ --> add()</button></li>
+        <li><button id="bt" v-on:click='add(3)'>点击我n++ --> add(3)</button></li>
+        <li><button id="bt" v-on:click='add(3,    $event)'>点击我n++ --> add($event)</button></li>
+        <hr>
+        <li><div id="bt" @mousemove='add'>我身上有滑动n++事件</div></li>
+      </ol>
+      <p >n: {{ n }}</p>
+    </div>
+  </body>
+</html>

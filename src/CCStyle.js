@@ -1,5 +1,4 @@
 // 固定样式初始化
-
 class CCStyle {
   constructor() {
     let first = document.body.firstChild,
