@@ -76,32 +76,59 @@ const CompileUtil = {
           ? node.classList.remove('cc_vue-hidden')
           : node.classList.add('cc_vue-hidden');
       });
+    },
+    center(vm, node, value, expr) {
+      value
+        ? node.classList.remove('cc_vue-center')
+        : node.classList.add('cc_vue-center');
+      new Watcher(vm, expr, (old, newVale) => {
+        newVale
+          ? node.classList.remove('cc_vue-center')
+          : node.classList.add('cc_vue-center');
+      });
     }
   },
   // 专门处理事件
   // list 就是原生事件名列表, 绑定原生函数用handler
   eventHandler: {
-    list:['click','mousemove','dblClick','mousedown','mouseup','blur','focus'],
-    handler(eventName,vm, node, type) {
+    list: [
+      'click',
+      'mousemove',
+      'dblClick',
+      'mousedown',
+      'mouseup',
+      'blur',
+      'focus'
+    ],
+    handler(eventName, vm, node, type) {
       if (/\(.*\)/.test(type)) {
         let str = /\((.*)\)/.exec(type)[1];
         str = str.replace(/\s/g, '');
         type = type.split('(')[0];
         if (str) {
           let arg = str.split(',');
-          node.addEventListener(eventName, (e) => {
-              for(let i=0;i<arg.length;i++){ // 这样就做到了$event的映射关系
-                 arg[i] === '$event' && (arg[i] = e)
-              };
+          node.addEventListener(
+            eventName,
+            e => {
+              for (let i = 0; i < arg.length; i++) {
+                // 这样就做到了$event的映射关系
+                arg[i] === '$event' && (arg[i] = e);
+              }
               vm[type].apply(vm, arg);
-            }, false );
+            },
+            false
+          );
           return;
         }
       }
       // 不带括号的直接挂就行了
-      node.addEventListener(eventName, () => {
-        vm[type].call(vm);
-      }, false );
+      node.addEventListener(
+        eventName,
+        () => {
+          vm[type].call(vm);
+        },
+        false
+      );
     }
   }
 };

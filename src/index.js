@@ -33,6 +33,7 @@ class C {
    * @method 把某个对象的值, 代理到目标对象上
    * @param { data } 想要被代理的对象
    * @param { target } 代理到谁身上
+   * @param { noRepeat } 是否检测重复数据
    */
   proxyVm(data = {}, target = this, noRepeat = false) {
     for (let key in data) {
