@@ -47,7 +47,7 @@ class Compiler {
    */
   compile(node) {
     let childNodes = node.childNodes;
-    [...childNodes].map(child => {
+    childNodes.forEach(child => {
       if (this.isElementNode(child)) {
         this.compileElement(child);
         this.compile(child);
@@ -61,26 +61,24 @@ class Compiler {
    * @param { node } 想要遍历的节点对象
    */
   compileElement(node) {
-    // 先解析出指令吧
+    // 第一步: 解析出指令吧
     let attributes = node.attributes;
-    [...attributes].map(attr => {
+    [...attributes].forEach(attr => {
       let name = attr.name,
         value = attr.value,
         obj = this.isDirective(name);
       if (obj.type === '指令') {
-        CompileUtil.dir[obj.attrName] &&
-          CompileUtil.dir[obj.attrName](
-            this.vm,
-            node,
-            CompileUtil.getVal(this.vm, value),
-            value
-          );
+        // 第二步: 有这个指令才执行, 没有就不管他了.
+        let dir = CompileUtil.dir[obj.attrName];
+        dir && dir(this.vm, node, CompileUtil.getVal(this.vm, value), value);
       } else if (obj.type === '事件') {
+        // 第二步: 解析各种事件.
         // 当前只处理了原生事件;
-        if(CompileUtil.eventHandler.list.includes(obj.attrName)){
-         CompileUtil.eventHandler.handler(obj.attrName,this.vm, node, value);
-        }else{
+        if (CompileUtil.eventHandler.list.includes(obj.attrName)) {
+          CompileUtil.eventHandler.handler(obj.attrName, this.vm, node, value);
+        } else {
           // eventHandler[obj.attrName] 这个事件不是原生挂载事件, 不能用handler 处理
+          // 比如说, 监听子组件的$emit事件
         }
       }
     });
@@ -91,7 +89,7 @@ class Compiler {
    */
   compileText(node) {
     let content = node.textContent;
-    content = content.replace(/\s/g,'');
+    content = content.replace(/\s/g, '');
     if (/\{\{.+?\}\}/.test(content)) {
       CompileUtil.text(node, content, this.vm);
     }

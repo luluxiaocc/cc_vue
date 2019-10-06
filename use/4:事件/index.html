@@ -17,12 +17,14 @@
         justify-content: center;
         align-items: center;
       }
+      .wrap{
+        height: 200px;width: 200px;border: 1px solid green;
+      }
     </style>
   </head>
   <body>
     <div id="app">
-      <!-- <ol id="w" c-center='!n' type='A'> -->
-          <ol id="w" type='A'>
+        <ol id="w" type='A'>
         <li c-show='n<3'><button id="bt" @click='add'>点击我n++ --> add</button></li>
         <li><button id="bt" @click='add()'>点击我n++ --> add()</button></li>
         <li><button id="bt" @click='add(3)'>点击我n++ --> add(3)</button></li>
@@ -34,6 +36,10 @@
         <li><button id="bt" v-on:click='add(3,    $event)'>点击我n++ --> add($event)</button></li>
         <hr>
         <li><div id="bt" @mousemove='add'>我身上有滑动n++事件</div></li>
+        <hr>
+        <div class="wrap" c-center='!n' c-show='n<3'>
+          <div>内容</div>
+        </div>
       </ol>
       <p >n: {{ n }}</p>
     </div>

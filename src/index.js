@@ -1,8 +1,10 @@
-import '../public/css/index.css';
+
 // import init from '../use/1:模板解析/index.js';
 // import init from '../use/2:双向绑定/index.js';
 // import init from '../use/3:指令/index.js';
 import init from '../use/4:事件/index.js';
+
+import '../public/css/index.css';
 import CCStyle from './CCStyle.js';
 import Compiler from './Compiler.js';
 import Observer from './Observer.js';
@@ -20,10 +22,10 @@ class C {
     // 2: 劫持data上面的操作
     new Observer(this, this.$data);
 
-    // 3: 把$data挂在vm身上, 用户可以直接this.xxx获取到值
+    // 3: 把$data代理到vm身上, 用户可以直接this.xxx获取到值
     this.proxyVm(this.$data);
 
-    // 4: 把$methods挂在vm身上
+    // 4: 把$methods代理到vm身上
     this.proxyVm(this.$methods, this, true);
 
     // end: 没有挂载元素vue不让你玩, 但是我让你玩😼, 里面处理的时候, 会给$el一个默认的#app;

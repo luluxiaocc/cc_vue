@@ -1,6 +1,8 @@
 // 数据劫持
 import { Dep } from './Watch';
+// 写在这里有些丑, 等以后工具类多了就单独抽出去一个;
 let toString = Object.prototype.toString;
+// 具体的劫持类
 class Observer {
   constructor(vm, data) {
     vm.$data = this.observer(data);
@@ -31,8 +33,7 @@ class Observer {
   defineReactive(data) {
     let type = toString.call(data);
     if (type !== '[object Object]' && type !== '[object Array]') return data;
-    let dep = new Dep(),
-      _this = this;
+    let _this = this, dep = new Dep();
     return new Proxy(data, {
       get(target, key) {
         Dep.target && dep.addSub(Dep.target);

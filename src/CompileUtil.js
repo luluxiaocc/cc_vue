@@ -2,7 +2,37 @@
 // vue 开启严格模式, 不支持with!!!!!!
 // with会导致变量泄漏到全局, 因为他没有var 与 let关键字, 所以会被默认提升
 import { Watcher } from './Watch';
-
+// 这个是更新内容的对象集合
+const updater = {
+  /**
+   * @method 更新文本信息
+   * @param { node } 更新谁
+   * @param { value } 新的值
+   */
+  textUpdater(node, value) {
+    node.textContent = value;
+  },
+  /**
+   * @method 新增class
+   * @param { node } 更新谁
+   */
+  addClass(node, name) {
+    node.classList.add(`cc_vue-${name}`);
+  },
+  /**
+   * @method 移除class
+   * @param { node } 更新谁
+   */
+  removeClass(node, name) {
+    node.classList.remove(`cc_vue-${name}`);
+  },
+  /**
+   * @method 索性直接让他来控制三元就完事了
+   */
+  doClass(val, node, name) {
+    val ? this.removeClass(node, name) : this.addClass(node, name);
+  }
+};
 const CompileUtil = {
   /**
    * @method 处理文本节点
@@ -11,17 +41,19 @@ const CompileUtil = {
   text(node, expr, vm) {
     let content = expr.replace(/\{\{(.+?)\}\}/g, ($0, $1) => {
       new Watcher(vm, $1, () => {
-        this.updater.textUpdater(node, this.getContentValue(vm, expr));
+        updater.textUpdater(node, this.getContentValue(vm, expr));
       });
-
       return this.getVal(vm, $1);
     });
-    this.updater.textUpdater(node, content);
+    updater.textUpdater(node, content);
   },
   /**
    * @method 根据value取得对应值
    * @param { vm } 框架实例
    * @param { expression } 要执行的表达式或变量
+   * 这个获取应该分为两步: (可能要到10月末做了);
+   * 第一步: 做一个取值的'池', 实时更新这个'池'.
+   * 第二步: 从这个池的环境里面, 运行我们的语句来获取到真正的值.
    */
   getVal(vm, expression) {
     let result,
@@ -38,24 +70,15 @@ const CompileUtil = {
     result = new Function('vm', __whoToVar)(vm);
     return result;
   },
-  getContentValue(vm, expr) {
-    return expr.replace(/\{\{(.+?)\}\}/g, ($0, $1) => {
-      $1 = $1.trim();
-      return this.getVal(vm, $1);
-    });
-  },
   /**
-   * @method 更新方法大集合
+   * @method 处理复合型的文本内容例如:{{n}}--{{m}}
+   * @param { vm } 框架实例
+   * @param { expr } 要执行的表达式或变量
    */
-  updater: {
-    /**
-     * @method 更新文本信息
-     * @param { node } 更新谁
-     * @param { value } 新的值
-     */
-    textUpdater(node, value) {
-      node.textContent = value;
-    }
+  getContentValue(vm, expr) {
+    return expr.replace(/\{\{(.+?)\}\}/g, ($0, $1) =>
+      this.getVal(vm, $1.trim())
+    );
   },
   // 专门放指令的对象
   dir: {
@@ -67,24 +90,18 @@ const CompileUtil = {
       });
     },
     // 思想很重要, 当然只是我自己想的.
+    // 源码的show是先保存标签上的display属性, 如果没有就不保存
+    // 然后通过添加none与 移除none来做到的隐藏
     show(vm, node, value, expr) {
-      value
-        ? node.classList.remove('cc_vue-hidden')
-        : node.classList.add('cc_vue-hidden');
+      updater.doClass(value, node, 'hidden');
       new Watcher(vm, expr, (old, newVale) => {
-        newVale
-          ? node.classList.remove('cc_vue-hidden')
-          : node.classList.add('cc_vue-hidden');
+        updater.doClass(newVale, node, 'hidden');
       });
     },
     center(vm, node, value, expr) {
-      value
-        ? node.classList.remove('cc_vue-center')
-        : node.classList.add('cc_vue-center');
+      updater.doClass(value, node, 'center');
       new Watcher(vm, expr, (old, newVale) => {
-        newVale
-          ? node.classList.remove('cc_vue-center')
-          : node.classList.add('cc_vue-center');
+        updater.doClass(value, node, 'center');
       });
     }
   },
@@ -92,14 +109,21 @@ const CompileUtil = {
   // list 就是原生事件名列表, 绑定原生函数用handler
   eventHandler: {
     list: [
-      'click',
-      'mousemove',
-      'dblClick',
-      'mousedown',
-      'mouseup',
       'blur',
-      'focus'
+      'focus',
+      'click',
+      'mouseup',
+      'dblClick',
+      'mousemove',
+      'mousedown'
     ],
+    /**
+     * @method 绑定原生事件的处理函数
+     * @param { eventName } 事件名例如: click 
+     * @param { vm } 框架实例
+     * @param { node } 元素
+     * @param { type } 执行的函数的名称
+     */
     handler(eventName, vm, node, type) {
       if (/\(.*\)/.test(type)) {
         let str = /\((.*)\)/.exec(type)[1];
@@ -107,28 +131,20 @@ const CompileUtil = {
         type = type.split('(')[0];
         if (str) {
           let arg = str.split(',');
-          node.addEventListener(
-            eventName,
-            e => {
-              for (let i = 0; i < arg.length; i++) {
-                // 这样就做到了$event的映射关系
-                arg[i] === '$event' && (arg[i] = e);
-              }
-              vm[type].apply(vm, arg);
-            },
-            false
-          );
+          node.addEventListener( eventName,  e => {
+            for (let i = 0; i < arg.length; i++) {
+              // 这样就做到了$event的映射关系
+              arg[i] === '$event' && (arg[i] = e);
+            }
+            vm[type].apply(vm, arg);
+          }, false );
           return;
         }
       }
       // 不带括号的直接挂就行了
-      node.addEventListener(
-        eventName,
-        () => {
+      node.addEventListener( eventName, () => {
           vm[type].call(vm);
-        },
-        false
-      );
+        }, false );
     }
   }
 };
