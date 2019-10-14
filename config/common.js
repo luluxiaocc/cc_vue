@@ -5,17 +5,24 @@ const merge = require('webpack-merge');
 
 const common = {
   entry: {
-    main: './src/index.js'
+    main: './src/index.js',
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../dist')
+  },
+  resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, '../loader')]
   },
   module: {
     rules: [
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader', 'postcss-loader']
+      },
+      {
+        test: /\.cc$/,
+        use: ['cc-loader']
       },
       {
         test: /\.js$/,

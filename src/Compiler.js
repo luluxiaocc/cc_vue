@@ -9,9 +9,13 @@ class Compiler {
     let fragment = this.node2fragment(this.el);
     // 3: 解析元素, 文档流也是对象
     this.compile(fragment);
+    // 4: 进行生命周期函数, 他真的一点都不高大上
+    vm.$created && vm.$created.call(vm);
 
     // 最后一步: 处理完再放回去
     this.el.appendChild(fragment);
+    // 调用声明周期钩子
+    vm.$mounted && vm.$mounted.call(vm);
   }
   /**
    * @method 判断是不是元素节点

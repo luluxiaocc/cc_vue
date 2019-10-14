@@ -59,7 +59,6 @@ const CompileUtil = {
     let result,
       __whoToVar = '';
     for (let i in vm.$data) {
-      // data下期做代理, 不用去掉原型上的属性
       __whoToVar += `let ${i} = vm['${i}'];`;
     }
     if (/cc_cb/.test(expression)) {

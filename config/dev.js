@@ -16,7 +16,9 @@ module.exports = {
       // template: path.resolve(__dirname, '../use/1:模板解析/index.html'),
       // template: path.resolve(__dirname, '../use/2:双向绑定/index.html'),
       // template: path.resolve(__dirname, '../use/3:指令/index.html'),
-      template: path.resolve(__dirname, '../use/4:事件/index.html'),
+      // template: path.resolve(__dirname, '../use/4:事件/index.html'),
+      template: path.resolve(__dirname, '../public/index.html'),
+      // chunks: ['main']
     })
   ]
 };
