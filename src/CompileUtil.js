@@ -58,7 +58,7 @@ const CompileUtil = {
   getVal(vm, expression) {
     let result,
       __whoToVar = '';
-    for (let i in vm.$data) {
+    for (let i in vm) {
       __whoToVar += `let ${i} = vm['${i}'];`;
     }
     if (/cc_cb/.test(expression)) {

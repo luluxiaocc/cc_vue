@@ -5,15 +5,16 @@ let toString = Object.prototype.toString;
 // 具体的劫持类
 class Observer {
   constructor(vm, data) {
-    vm.$data = this.observer(data);
+    this.vm = vm;
+    vm.$data = this.observer(data, true);
   }
   /**
    * @method 遍历出需要观察的对象
    * @param { data } 要观察的对象
    */
-  observer(data) {
+  observer(data, init = false) {
     let type = toString.call(data),
-      $data = this.defineReactive(data);
+      $data = this.defineReactive(data, init);
     if (type === '[object Object]') {
       for (let item in data) {
         data[item] = this.defineReactive(data[item]);
@@ -30,10 +31,11 @@ class Observer {
    * @method 针对对象进行观察
    * @param { data } 要观察的对象
    */
-  defineReactive(data) {
+  defineReactive(data, init) {
     let type = toString.call(data);
     if (type !== '[object Object]' && type !== '[object Array]') return data;
-    let _this = this, dep = new Dep();
+    let _this = this,
+      dep = new Dep();
     return new Proxy(data, {
       get(target, key) {
         Dep.target && dep.addSub(Dep.target);
@@ -41,6 +43,11 @@ class Observer {
       },
       set(target, key, value) {
         if (target[key] !== value) {
+          if (init) {
+            // 对data的数据进行watch处理
+            (_this.vm.$watch || {})[key] &&
+              _this.vm.$watch[key].call(_this, value, target[key]);
+          }
           target[key] = _this.observer(value);
           dep.notify();
         }

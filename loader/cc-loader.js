@@ -8,7 +8,7 @@ function loader(source) {
     'utf8'
   );
   source = source.replace(/\s+/g, ' ');
-  let s = /<style>(.*)<\/style>/gm.exec(source)[1];
+  let s = (/<style>(.*)<\/style>/gm.exec(source)||[])[1];
   let j = /<script>(.*)<\/script>/gm.exec(source)[1];
   let t = /<template>(.*)<\/template>/gm.exec(source)[1];
   template = template.replace(/(#--template-->)/, t);
