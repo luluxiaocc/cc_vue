@@ -1,5 +1,39 @@
 // 解析模板系列节目
 import CompileUtil from './CompileUtil';
+
+// 专门用来顶替if语句的
+// 模拟koa2的写法, 进行 
+class HandlerStarts {
+  constructor() {
+    this.list = [];
+  }
+  add(type, name) {
+    this.list.push({ type, name });
+  }
+  search(attrName) {
+    let result = {},
+      list = this.list;
+    for (let i = 0, len = list.length; i < len; i++) {
+      let { name, type } = list[i];
+      if (attrName.startsWith(name)) {
+        result = {
+          type,
+          attrName: attrName.split(name)[1]
+        };
+        break;
+      }
+    }
+    return result;
+  }
+}
+
+let handlerStarts = new HandlerStarts();
+
+handlerStarts.add('事件', 'c-on:');
+handlerStarts.add('指令', 'c-');
+handlerStarts.add('变量', ':');
+handlerStarts.add('事件', '@');
+
 class Compiler {
   constructor(el = '#app', vm) {
     this.vm = vm;
@@ -100,16 +134,21 @@ class Compiler {
   }
   // 是什么指令
   isDirective(attrName) {
-    if (attrName.startsWith('c-')) {
-      return { type: '指令', attrName: attrName.split('c-')[1] };
-    } else if (attrName.startsWith(':')) {
-      return { type: '变量', attrName: attrName.split(':')[1] };
-    } else if (attrName.startsWith('v-on:')) {
-      return { type: '事件', attrName: attrName.split('v-on:')[1] };
-    } else if (attrName.startsWith('@')) {
-      return { type: '事件', attrName: attrName.split('@')[1] };
-    }
-    return {};
+    // if (attrName.startsWith('c-on:')) {
+    //   return { type: '事件', attrName: attrName.split('c-on:')[1] };
+    // }
+    // if (attrName.startsWith('c-')) {
+    //   return { type: '指令', attrName: attrName.split('c-')[1] };
+    // }
+    // if (attrName.startsWith(':')) {
+    //   return { type: '变量', attrName: attrName.split(':')[1] };
+    // }
+    // if (attrName.startsWith('@')) {
+    //   return { type: '事件', attrName: attrName.split('@')[1] };
+    // }
+    // return {};
+    //  console.log(handlerStarts.search(attrName))
+    return handlerStarts.search(attrName);
   }
 }
 

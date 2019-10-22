@@ -6,7 +6,7 @@ import { Watcher } from './Watch';
 const updater = {
   /**
    * @method 更新文本信息
-   * @param { node } 更新谁
+   * @param { node } 目标元素
    * @param { value } 新的值
    */
   textUpdater(node, value) {
@@ -14,14 +14,14 @@ const updater = {
   },
   /**
    * @method 新增class
-   * @param { node } 更新谁
+   * @param { node } 目标元素
    */
   addClass(node, name) {
     node.classList.add(`cc_vue-${name}`);
   },
   /**
    * @method 移除class
-   * @param { node } 更新谁
+   * @param { node } 目标元素
    */
   removeClass(node, name) {
     node.classList.remove(`cc_vue-${name}`);

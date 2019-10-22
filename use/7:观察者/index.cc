@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <button v-on:click='addn'> n++</button>
+    <button c-on:click='addn'> n++</button>
     <p>n:{{n}}</p>
   </div>
 </template>
